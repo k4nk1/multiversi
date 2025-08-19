@@ -33,8 +33,10 @@ function createApp(){
         const name: string = req.body.name ? req.body.name : config.unnamed;
         const isPublic = req.body.isPublic === 'true';
         const hashedPassword = req.body.password ? await hash(req.body.password, config.saltOrRounds) : '';
-        const newRoom = {id: id, name: name, isPublic: isPublic, hashedPassword: hashedPassword, currentPlayers: 0};
+        const maxPlayers = req.body.maxPlayers ? req.body.maxPlayers.toString() : config.defaultMaxPlayers;
+        const newRoom = {id: id, name: name, isPublic: isPublic, hashedPassword: hashedPassword, currentPlayers: 0, maxPlayers: maxPlayers};
         rooms.set(id, newRoom);
+        res.send({id: id});
     });
     return app;
 }

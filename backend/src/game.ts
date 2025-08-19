@@ -1,23 +1,57 @@
 type PlayerOrder = number;
-const EMPTY: PlayerOrder = -1;
+type Cell = PlayerOrder | null;
+interface Coord{
+    x: number,
+    y: number
+}
+
+function add(vec1: Coord, vec2: Coord): Coord{
+    return {x: vec1.x + vec2.y, y: vec1.y + vec2.y};
+}
 
 class Game{
     size: number;
-    board: PlayerOrder[][];
+    board: Cell[][];
     noPlayer: number;
     constructor(size: number, noPlayer: number){
         this.size = size;
-        this.board = [...Array(size)].map(_ => Array(size).fill(EMPTY))
+        this.board = [...Array(size)].map(_ => Array(size).fill(undefined))
         this.noPlayer = noPlayer;
     }
-
-    place(x: number, y: number, playerOrder: PlayerOrder): boolean{
-        if(x < 0 || this.size < x || y < 0 || this.size < y) return FAILED;
-        if(this.)
+    
+    place(x: number, y: number, playerOrder: PlayerOrder): Coord[]{
+        return this._place({x, y}, playerOrder);
     }
 
-    get(x: number, y: number): PlayerOrder{
-        if(x < 0 || this.size < x || y < 0 || this.size < y) return null;
-        
-    } 
+    get(x: number, y: number): Cell | undefined{
+        return this._get({x, y});
+    }
+
+    set(x: number, y: number, playerOrder: PlayerOrder): void{
+        return this._set({x, y}, playerOrder);
+    }
+
+    _place(coord: Coord, playerOrder: PlayerOrder): Coord[]{
+        if(this._get(coord) !== null) return [];
+        const directions: Coord[] = [{x:-1, y:-1}, {x:-1, y: 0}, {x:-1, y:1}, {x:0, y:1}, {x:1, y:-1}, {x:1, y:0}, {x:1, y:-1}];
+        const changedCoords: Coord[] = [];
+        directions.forEach(direction => {
+            const line: Coord[] = [add(coord, direction)];
+            while(true){
+                const cell = this._get(line.at(-1));
+            }
+        });
+    }
+
+    _get(coord: Coord): Cell | undefined{
+        return this.board.at(coord.x)?.at(coord.y);
+    }
+
+    _set(coord: Coord, playerOrder: PlayerOrder): void{
+        const column = this.board[coord.x];
+        if(!column) return;
+        column[coord.y] = playerOrder;
+    }
+
+    
 }
