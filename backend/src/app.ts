@@ -2,7 +2,7 @@ import express from 'express';
 import { hash } from 'bcrypt';
 
 import config from './config';
-import rooms from './room';
+import { type Room, rooms } from './room';
 
 interface PublicRoomInfo {
     id: string
@@ -32,9 +32,9 @@ function createApp(){
         const id = Math.floor(Math.random() * Math.pow(16, config.roomIdDigit)).toString(16).padStart(config.roomIdDigit, '0');
         const name: string = req.body.name ? req.body.name : config.unnamed;
         const isPublic = req.body.isPublic === 'true';
-        const hashedPassword = req.body.password ? await hash(req.body.password, config.saltOrRounds) : '';
-        const maxPlayers = req.body.maxPlayers ? req.body.maxPlayers.toString() : config.defaultMaxPlayers;
-        const newRoom = {id: id, name: name, isPublic: isPublic, hashedPassword: hashedPassword, currentPlayers: 0, maxPlayers: maxPlayers};
+        const hashedPassword = req.body.password ? await hash(req.body.password, config.saltOrRounds) : undefined;
+        const maxPlayers = req.body.maxPlayers ? Number(req.body.maxPlayers) : config.defaultMaxPlayers;
+        const newRoom: Room = {id: id, name: name, isPublic: isPublic, hashedPassword: hashedPassword, currentPlayers: 0, maxPlayers: maxPlayers, players: []};
         rooms.set(id, newRoom);
         res.send({id: id});
     });

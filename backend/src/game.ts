@@ -1,5 +1,7 @@
-type PlayerOrder = number;
+import { type PlayerOrder } from "./player";
+
 type Cell = PlayerOrder | null;
+
 interface Coord{
     x: number,
     y: number
@@ -36,11 +38,25 @@ class Game{
         const directions: Coord[] = [{x:-1, y:-1}, {x:-1, y: 0}, {x:-1, y:1}, {x:0, y:1}, {x:1, y:-1}, {x:1, y:0}, {x:1, y:-1}];
         const changedCoords: Coord[] = [];
         directions.forEach(direction => {
-            const line: Coord[] = [add(coord, direction)];
+            const line: Coord[] = [];
+            let pos = coord;
             while(true){
-                const cell = this._get(line.at(-1));
+                pos = add(pos, direction);
+                const cell = this._get(pos);
+                if(cell === null || cell === undefined) break;
+                if(cell === playerOrder){
+                    line.forEach(_coord => {
+                        this._set(_coord, playerOrder);
+                    });
+                    changedCoords.push(...line);
+                    break;
+                }
+                line.push(pos);
             }
         });
+        if(changedCoords.length === 0) return [];
+        this._set(coord, playerOrder);
+        return changedCoords;
     }
 
     _get(coord: Coord): Cell | undefined{
@@ -55,3 +71,5 @@ class Game{
 
     
 }
+
+export default Game;
